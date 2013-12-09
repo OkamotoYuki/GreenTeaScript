@@ -27,9 +27,9 @@ import java.lang.reflect.Method;
 import static org.objectweb.asm.Opcodes.*;
 import org.GreenTeaScript.DShell.DShellAuthenticator;
 
-public class AuthenticatedJavaByteCodeGenerator extends JavaByteCodeGenerator {
+public class JavaByteCodeGenerator4Test extends JavaByteCodeGenerator {
 
-	public AuthenticatedJavaByteCodeGenerator(String TargetCode, String OutputFile,
+	public JavaByteCodeGenerator4Test(String TargetCode, String OutputFile,
 			int GeneratorFlag) {
 		super(TargetCode, OutputFile, GeneratorFlag);
 		// TODO Auto-generated constructor stub

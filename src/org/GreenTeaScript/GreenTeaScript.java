@@ -673,6 +673,10 @@ public class GreenTeaScript extends GreenTeaUtils {
 				Index += 1;
 				continue;
 			}
+			if((Argu.equals("-t") || Argu.equals("--test"))) {
+				TargetCode = "exe4test";
+				continue;
+			}
 			if(Argu.equals("-i")) {
 				ShellMode = true;
 				continue;

@@ -527,6 +527,7 @@ public abstract class LibGreenTea implements GreenTeaConsts {
 		System.out.println("  --out|-o  FILE        Output filename");
 		System.out.println("  --eval|-e EXPR        Program passed in as string");
 		System.out.println("  --require|-r LIBRARY     Load the library");
+		System.out.println("  --test|-t             Execute in test mode");
 		System.out.println("  --verbose             Printing Debug infomation");
 		System.out.println("     --verbose:token      adding token info");
 		System.out.println("     --verbose:type       adding type info");
@@ -588,6 +589,9 @@ public abstract class LibGreenTea implements GreenTeaConsts {
 		//else if(TargetCode.startsWith("csharp")) {
 		//	return new CSharpSourceCodeGenerator(TargetCode, OutputFile, GeneratorFlag);
 		//}
+		else if(TargetCode.startsWith("exe4test")) {
+			return new JavaByteCodeGenerator4Test(TargetCode, OutputFile, GeneratorFlag);
+		}
 		else if(TargetCode.startsWith("exe")) {
 			return new JavaByteCodeGenerator(TargetCode, OutputFile, GeneratorFlag);
 		}
