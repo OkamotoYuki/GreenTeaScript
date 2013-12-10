@@ -35,7 +35,7 @@ public class RecAPI {
 		return ReturnValue;
 	}
 	
-	public static void PushRawData(String RECServerURL, String Type, String Location, int Data, String AuthId, String Context) {
+	public static String PushRawData(String RECServerURL, String Type, String Location, int Data, String AuthId, String Context) {
 		String Params = "{ \"type\": \""+Type+"\", "
 							+ "\"location\": \""+Location+"\", "
 							+ "\"data\": "+Data+", "
@@ -52,9 +52,11 @@ public class RecAPI {
 		}
 		
 		// TODO validate Response
+		
+		return Response;
 	}
 	
-	public static String getLatestData(String RECServerURL, String Type, String Location) {
+	public static String GetLatestData(String RECServerURL, String Type, String Location) {
 		String Params = "{ \"type\": \""+Type+"\", "
 							+ "\"location\": \""+Location+"\" }";
 		
@@ -69,7 +71,6 @@ public class RecAPI {
 		
 		// TODO validate Response
 		
-		System.out.println(Response);
 		return Response;
 	}
 	

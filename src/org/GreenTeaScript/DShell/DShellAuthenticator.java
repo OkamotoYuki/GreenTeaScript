@@ -25,6 +25,7 @@ public class DShellAuthenticator {
 		}
 		
 		RecAPI.PushRawData(RECServerURL, TestedFunctionName, Location, Data, AuthId, "");
+		RecAPI.GetLatestData(RECServerURL, TestedFunctionName, Location);
 
 		return Result;
 	}
