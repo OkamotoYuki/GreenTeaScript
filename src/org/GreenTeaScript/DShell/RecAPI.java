@@ -1,7 +1,9 @@
 package org.GreenTeaScript.DShell;
 
 import java.io.IOException;
+import java.util.Map;
 
+import org.GreenTeaScript.LibGreenTea;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -10,9 +12,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class RecAPI {
 	
-	private static String RemoteProcedureCall(String RECServerURL, String Method, String Params) throws IOException {
+	private static Map<String, Object> RemoteProcedureCall(String RECServerURL, String Method, String Params) throws IOException {
 		double JsonRpcVersion = 2.0;
 		int Id = 0;
 		
@@ -20,32 +24,58 @@ public class RecAPI {
 									+ "\"method\": \""+Method+"\", "
 									+ "\"params\": "+Params+", "
 									+ "\"id\": "+Id+" }");
-		StringEntity Body = new StringEntity(Json);
+		StringEntity RequestBody = new StringEntity(Json);
 		
+		// connect to REC
 		HttpClient Client = HttpClientBuilder.create().build();
 		HttpPost Request = new HttpPost(RECServerURL);
 		Request.addHeader("Content-type", "application/json");
-		Request.setEntity(Body);
+		Request.setEntity(RequestBody);
 		HttpResponse Response = Client.execute(Request);
 		HttpEntity Entity = Response.getEntity();
+		String ResponseBody = EntityUtils.toString(Entity);
 
-		String ReturnValue = EntityUtils.toString(Entity);
-		// TODO validate ReturnValue
+		// validate response
+		ObjectMapper Mapper = new ObjectMapper();
+		@SuppressWarnings("unchecked")
+		Map<String, Object> ResponseBodyMap = Mapper.readValue(ResponseBody, Map.class);
+		if(ResponseBodyMap == null) {
+			return null;
+		}
+		if(!ResponseBodyMap.containsKey("id")) {
+			LibGreenTea.Exit(1, "jsonrpc must have property 'id'");
+		}
+		if(!ResponseBodyMap.containsKey("jsonrpc")) {
+			LibGreenTea.Exit(1, "jsonrpc must have property 'jsonrpc'");
+		}
+		if(Float.parseFloat((String)ResponseBodyMap.get("jsonrpc")) != 2.0) {
+			LibGreenTea.Exit(1, "dshell supports jsonrpc 2.0");
+		}
+		if(!ResponseBodyMap.containsKey("result")) {
+			LibGreenTea.Exit(1, "jsonrpc must have property 'result'");
+		}
+
+		if(ResponseBodyMap.get("result") == null) {
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> ReturnValue = (Map<String, Object>)ResponseBodyMap.get("result");
 		
 		return ReturnValue;
 	}
 	
-	public static String PushRawData(String RECServerURL, String Type, String Location, int Data, String AuthId, String Context) {
+	public static Map<String, Object> PushRawData(String RECServerURL, String Type, String Location, int Data, String AuthId, String Context) {
 		String Params = "{ \"type\": \""+Type+"\", "
 							+ "\"location\": \""+Location+"\", "
 							+ "\"data\": "+Data+", "
 							+ "\"authid\": \""+AuthId+"\", "
 							+ "\"context\": \""+Context+"\" }";
 		
-		String Response = "";
+		Map<String, Object> Result = null;
 		
 		try {
-			Response = RemoteProcedureCall(RECServerURL, "pushRawData", Params);
+			Result = RemoteProcedureCall(RECServerURL, "pushRawData", Params);
 		}
 		catch(IOException e) {
 			// TODO exception handling
@@ -53,17 +83,17 @@ public class RecAPI {
 		
 		// TODO validate Response
 		
-		return Response;
+		return Result;
 	}
 	
-	public static String GetLatestData(String RECServerURL, String Type, String Location) {
+	public static Map<String, Object> GetLatestData(String RECServerURL, String Type, String Location) {
 		String Params = "{ \"type\": \""+Type+"\", "
 							+ "\"location\": \""+Location+"\" }";
 		
-		String Response = "";
+		Map<String, Object> Result = null;
 
 		try {
-			Response = RemoteProcedureCall(RECServerURL, "getLatestData", Params);
+			Result = RemoteProcedureCall(RECServerURL, "getLatestData", Params);
 		}
 		catch(IOException e) {
 			// TODO exception handling
@@ -71,7 +101,7 @@ public class RecAPI {
 		
 		// TODO validate Response
 		
-		return Response;
+		return Result;
 	}
 	
 }
