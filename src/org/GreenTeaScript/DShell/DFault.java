@@ -66,6 +66,10 @@ public class DFault /*extends Exception*/ {
 		return this;
 	}
 	
+	public int ToNumber() {
+		return 1;   // TODO: support other fault type
+	}
+	
 	public final static boolean MatchFault(DFault Fault, String Location, String FaultInfo) {
 		return(Fault.Location.equalsIgnoreCase(Location) && Fault.FaultInfo.equalsIgnoreCase(FaultInfo));
 	}

@@ -2,14 +2,17 @@ package org.GreenTeaScript.DShell;
 
 import java.io.IOException;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 public class RecAPI {
 	
-	private static void /* TODO: return result of rpc */ RemoteProcedureCall(String RECServerURL, String Method, String Params) throws IOException {
+	private static String RemoteProcedureCall(String RECServerURL, String Method, String Params) throws IOException {
 		double JsonRpcVersion = 2.0;
 		int Id = 0;
 		
@@ -23,30 +26,51 @@ public class RecAPI {
 		HttpPost Request = new HttpPost(RECServerURL);
 		Request.addHeader("Content-type", "application/json");
 		Request.setEntity(Body);
-		Client.execute(Request);   // TODO: check response
-	}
-	
-	private static int DFault2Number(DFault Fault) {
-		if(Fault != null) {
-			return 1;   // TODO: support other fault type
-		}
+		HttpResponse Response = Client.execute(Request);
+		HttpEntity Entity = Response.getEntity();
+
+		String ReturnValue = EntityUtils.toString(Entity);
+		// TODO validate ReturnValue
 		
-		return 0;
+		return ReturnValue;
 	}
 	
-	public static void PushRawData(String RECServerURL, String Type, String Location, DFault Fault, String AuthId, String Context) {
+	public static void PushRawData(String RECServerURL, String Type, String Location, int Data, String AuthId, String Context) {
 		String Params = "{ \"type\": \""+Type+"\", "
 							+ "\"location\": \""+Location+"\", "
-							+ "\"data\": "+DFault2Number(Fault)+", "
+							+ "\"data\": "+Data+", "
 							+ "\"authid\": \""+AuthId+"\", "
 							+ "\"context\": \""+Context+"\" }";
 		
+		String Response = "";
+		
 		try {
-			RemoteProcedureCall(RECServerURL, "pushRawData", Params);
+			Response = RemoteProcedureCall(RECServerURL, "pushRawData", Params);
 		}
 		catch(IOException e) {
 			// TODO exception handling
 		}
+		
+		// TODO validate Response
+	}
+	
+	public static String getLatestData(String RECServerURL, String Type, String Location) {
+		String Params = "{ \"type\": \""+Type+"\", "
+							+ "\"location\": \""+Location+"\" }";
+		
+		String Response = "";
+
+		try {
+			Response = RemoteProcedureCall(RECServerURL, "getLatestData", Params);
+		}
+		catch(IOException e) {
+			// TODO exception handling
+		}
+		
+		// TODO validate Response
+		
+		System.out.println(Response);
+		return Response;
 	}
 	
 }

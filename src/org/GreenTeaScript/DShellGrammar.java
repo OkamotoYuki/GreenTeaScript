@@ -129,8 +129,14 @@ public class DShellGrammar extends GreenTeaUtils {
 		if(AuthId == null) {
 			// TODO: output warning
 		}
+		
+		int Data = 0;
+		
+		if(Fault != null) {
+			Data = Fault.ToNumber();
+		}
 
-		RecAPI.PushRawData(RECServerURL, DCaseNode, Location, Fault, AuthId, Context);
+		RecAPI.PushRawData(RECServerURL, DCaseNode, Location, Data, AuthId, Context);
 
 		return Fault;
 	}

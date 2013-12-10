@@ -1,12 +1,31 @@
 package org.GreenTeaScript.DShell;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.GreenTeaScript.GtFunc;
 
 public class DShellAuthenticator {
 	
+	public static String RECServerURL = "http://localhost:3001/api/2.0/";
+	
 	public static boolean RecordTestResult(boolean Result, GtFunc Func) {
-		System.out.println(Result);
+		int Data = 0;
 		String TestedFunctionName = Func.FuncName.replaceAll("Test_", "");
-		System.out.println(TestedFunctionName);
+		String AuthId = System.getProperty("user.name");
+		String Location;
+
+		try {
+			Location = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			Location = "localhost";
+		}
+
+		if(!Result) {
+			Data = 1;
+		}
+		
+		RecAPI.PushRawData(RECServerURL, TestedFunctionName, Location, Data, AuthId, "");
+
 		return Result;
 	}
 	
