@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 //endif VAJA
 
+import org.GreenTeaScript.DShell.DShellAuthenticator;
+
 class GtUndefinedSymbol {
 	@Override public String toString() {
 		return "UndefinedSymbol";
@@ -643,6 +645,7 @@ public class GreenTeaScript extends GreenTeaUtils {
 		/*local*/String OutputFile = "-";  // stdout
 		/*local*/int    Index = 0;
 		/*local*/boolean ShellMode = false;
+		/*local*/boolean AuthMode = false;
 		while(Index < Args.length) {
 			/*local*/String Argu = Args[Index];
 			if(!Argu.startsWith("-")) {
@@ -675,6 +678,15 @@ public class GreenTeaScript extends GreenTeaUtils {
 			}
 			if((Argu.equals("-t") || Argu.equals("--test"))) {
 				TargetCode = "exe4test";
+				continue;
+			}
+			if((Argu.equals("-a") || Argu.equals("--auth"))) {
+				AuthMode = true;
+				continue;
+			}
+			if((Argu.equals("--rechost")) && Index < Args.length) {
+				DShellAuthenticator.RECServerURL = Args[Index];
+				Index += 1;
 				continue;
 			}
 			if(Argu.equals("-i")) {
@@ -721,6 +733,10 @@ public class GreenTeaScript extends GreenTeaUtils {
 			LibGreenTea.Usage("no target: " + TargetCode);
 		}
 		/*local*/GtParserContext Context = new GtParserContext(new KonohaGrammar(), Generator);
+		if(AuthMode) {
+			DShellAuthenticator.InitAuthenticatedFunctionMap();
+			Context.LoadGrammar(new KonohaGrammar4Authentication());
+		}
 		if(RequiredLibName != null) {
 			if(!Context.TopLevelNameSpace.LoadRequiredLib(RequiredLibName)) {
 				LibGreenTea.Exit(1, "failed to load required library: " + RequiredLibName);
