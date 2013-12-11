@@ -9,6 +9,7 @@ import org.GreenTeaScript.GtFunc;
 public class DShellAuthenticator {
 	
 	public static String RECServerURL = "http://localhost:3001/api/2.0/";
+	public static int TestVersion = -1; // use latest version normally
 	private static Map<String, Boolean> AuthenticatedFunctionMap = new HashMap<String, Boolean>();
 	
 	public static boolean RecordTestResult(boolean Result, GtFunc Func) {

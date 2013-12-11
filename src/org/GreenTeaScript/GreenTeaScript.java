@@ -682,6 +682,16 @@ public class GreenTeaScript extends GreenTeaUtils {
 			}
 			if((Argu.equals("-a") || Argu.equals("--auth"))) {
 				AuthMode = true;
+				if(Index < Args.length) {
+					try {
+						int Version = Integer.parseInt(Args[Index]);
+						DShellAuthenticator.TestVersion = Version;
+						Index += 1;
+					}
+					catch(NumberFormatException e) {
+						// do nothing
+					}
+				}
 				continue;
 			}
 			if((Argu.equals("--rechost")) && Index < Args.length) {
