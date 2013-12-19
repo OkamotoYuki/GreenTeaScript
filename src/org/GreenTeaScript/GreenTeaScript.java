@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 //endif VAJA
 
+import java.util.UUID;
+
 import org.GreenTeaScript.DShell.DShellAuthenticator;
 
 class GtUndefinedSymbol {
@@ -678,19 +680,16 @@ public class GreenTeaScript extends GreenTeaUtils {
 			}
 			if((Argu.equals("-t") || Argu.equals("--test"))) {
 				TargetCode = "exe4test";
+				String TestVersion = UUID.randomUUID().toString();
+				System.out.println("test version: "+TestVersion);
+				DShellAuthenticator.TestVersion = TestVersion;
 				continue;
 			}
 			if((Argu.equals("-a") || Argu.equals("--auth"))) {
 				AuthMode = true;
 				if(Index < Args.length) {
-					try {
-						int Version = Integer.parseInt(Args[Index]);
-						DShellAuthenticator.TestVersion = Version;
-						Index += 1;
-					}
-					catch(NumberFormatException e) {
-						// do nothing
-					}
+					DShellAuthenticator.TestVersion = Args[Index];
+					Index += 1;
 				}
 				continue;
 			}

@@ -527,7 +527,7 @@ public abstract class LibGreenTea implements GreenTeaConsts {
 		System.out.println("  --out|-o  FILE        Output filename");
 		System.out.println("  --eval|-e EXPR        Program passed in as string");
 		System.out.println("  --require|-r LIBRARY     Load the library");
-		System.out.println("  --test|-t [TEST VERSION] Execute in test mode");
+		System.out.println("  --test                   Execute in test mode");
 		System.out.println("  --auth|-a [TEST VERSION] Execute in authenticated mode");
 		System.out.println("  --rechost IP          Specify REC server");
 		System.out.println("  --verbose             Printing Debug infomation");

@@ -2,45 +2,52 @@ package org.GreenTeaScript.DShell;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.GreenTeaScript.GtFunc;
 
 public class DShellAuthenticator {
 	
-	public static String RECServerURL = "http://localhost:3001/api/2.0/";
-	public static int TestVersion = -1; // use latest version normally
+	public static String RECServerURL = "http://localhost:3001/api/3.0/";
+	public static String TestVersion = null;
 	private static Map<String, Boolean> AuthenticatedFunctionMap = new HashMap<String, Boolean>();
 	
 	public static boolean RecordTestResult(boolean Result, GtFunc Func) {
-		int Data = 0;
+		String User = System.getProperty("user.name");
+		String Host;
 		String TestedFunctionName = Func.FuncName.replaceAll("Test_", "");
-		String AuthId = System.getProperty("user.name");
-		String Location;
 
 		try {
-			Location = InetAddress.getLocalHost().getHostName();
+			Host = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
-			Location = "localhost";
+			Host = "localhost";
 		}
-
-		if(!Result) {
-			Data = 1;
-		}
-		
-		RecAPI.PushRawData(RECServerURL, TestedFunctionName, Location, Data, AuthId, "");
-		System.out.println(RecAPI.GetLatestData(RECServerURL, TestedFunctionName, Location));
+	
+		RecAPI.PushTestResult(RECServerURL, User, Host, TestVersion, TestedFunctionName, Result);
 
 		return Result;
 	}
 	
 	public static void InitAuthenticatedFunctionMap() {
+		String User = System.getProperty("user.name");
+		String Host;
+
+		try {
+			Host = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			Host = "localhost";
+		}
+		
 		AuthenticatedFunctionMap.put("print", true);
 		AuthenticatedFunctionMap.put("println", true);
 		AuthenticatedFunctionMap.put("assert", true);
-		AuthenticatedFunctionMap.put("func1", true); // FIXME
-		AuthenticatedFunctionMap.put("func2", false); // FIXME
 
+		List<Map<String, Object>> AuthenticatedFunctionList = RecAPI.GetTestResultList(RECServerURL, User, Host, TestVersion);
+		for(int i = 0; i < AuthenticatedFunctionList.size(); i++) {
+			Map<String, Object> AuthenticatedFunction = AuthenticatedFunctionList.get(i);
+			AuthenticatedFunctionMap.put((String)AuthenticatedFunction.get("funcname"), (Boolean)AuthenticatedFunction.get("result"));
+		}
 	}
 	
 	public static boolean AuthenticateFunction(String FunctionName) {

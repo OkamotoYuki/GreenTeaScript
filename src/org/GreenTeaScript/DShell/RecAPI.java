@@ -1,6 +1,7 @@
 package org.GreenTeaScript.DShell;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.GreenTeaScript.LibGreenTea;
@@ -16,7 +17,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RecAPI {
 	
-	private static Map<String, Object> RemoteProcedureCall(String RECServerURL, String Method, String Params) throws IOException {
+	/* API for AssureNote */
+	private static Object RemoteProcedureCall(String RECServerURL, String Method, String Params) throws IOException {
 		double JsonRpcVersion = 2.0;
 		int Id = 0;
 		
@@ -55,14 +57,7 @@ public class RecAPI {
 			LibGreenTea.Exit(1, "jsonrpc must have property 'result'");
 		}
 
-		if(ResponseBodyMap.get("result") == null) {
-			return null;
-		}
-
-		@SuppressWarnings("unchecked")
-		Map<String, Object> ReturnValue = (Map<String, Object>)ResponseBodyMap.get("result");
-		
-		return ReturnValue;
+		return ResponseBodyMap.get("result");
 	}
 	
 	public static Map<String, Object> PushRawData(String RECServerURL, String Type, String Location, int Data, String AuthId, String Context) {
@@ -72,10 +67,10 @@ public class RecAPI {
 							+ "\"authid\": \""+AuthId+"\", "
 							+ "\"context\": \""+Context+"\" }";
 		
-		Map<String, Object> Result = null;
+		Map<String, Object> ReturnValue = null;
 		
 		try {
-			Result = RemoteProcedureCall(RECServerURL, "pushRawData", Params);
+			ReturnValue = (Map<String, Object>)RemoteProcedureCall(RECServerURL, "pushRawData", Params);
 		}
 		catch(IOException e) {
 			// TODO exception handling
@@ -83,17 +78,17 @@ public class RecAPI {
 		
 		// TODO validate Response
 		
-		return Result;
+		return ReturnValue;
 	}
 	
 	public static Map<String, Object> GetLatestData(String RECServerURL, String Type, String Location) {
 		String Params = "{ \"type\": \""+Type+"\", "
 							+ "\"location\": \""+Location+"\" }";
 		
-		Map<String, Object> Result = null;
+		Map<String, Object> ReturnValue = null;
 
 		try {
-			Result = RemoteProcedureCall(RECServerURL, "getLatestData", Params);
+			ReturnValue = (Map<String, Object>)RemoteProcedureCall(RECServerURL, "getLatestData", Params);
 		}
 		catch(IOException e) {
 			// TODO exception handling
@@ -101,7 +96,68 @@ public class RecAPI {
 		
 		// TODO validate Response
 		
-		return Result;
+		return ReturnValue;
+	}
+	
+	/* API for DShell */
+	public static Map<String, Object> PushTestResult(String RECServerURL, String User, String Host, String Version, String Funcname, boolean Result) {
+		String Params = "{ \"user\": \""+User+"\", "
+							+ "\"host\": \""+Host+"\", "
+							+ "\"version\": \""+Version+"\", "
+							+ "\"funcname\": \""+Funcname+"\", "
+							+ "\"result\": "+Result+" }";
+		
+		Map<String, Object> ReturnValue = null;
+		
+		try {
+			ReturnValue = (Map<String, Object>)RemoteProcedureCall(RECServerURL, "pushTestResult", Params);
+		}
+		catch(IOException e) {
+			// TODO exception handling
+		}
+		
+		// TODO validate Response
+		
+		return ReturnValue;
+	}
+	
+	public static Map<String, Object> GetTestResult(String RECServerURL, String User, String Host, String Version, String Funcname) {
+		String Params = "{ \"user\": \""+User+"\", "
+							+ "\"host\": \""+Host+"\", "
+							+ "\"version\": \""+Version+"\", "
+							+ "\"funcname\": \""+Funcname+"\" }";
+		
+		Map<String, Object> ReturnValue = null;
+		
+		try {
+			ReturnValue = (Map<String, Object>)RemoteProcedureCall(RECServerURL, "getTestResult", Params);
+		}
+		catch(IOException e) {
+			// TODO exception handling
+		}
+		
+		// TODO validate Response
+		
+		return ReturnValue;
+	}
+
+	public static List<Map<String, Object>> GetTestResultList(String RECServerURL, String User, String Host, String Version) {
+		String Params = "{ \"user\": \""+User+"\", "
+							+ "\"host\": \""+Host+"\", "
+							+ "\"version\": \""+Version+"\" }";
+		
+		List<Map<String, Object>> ReturnValue = null;
+		
+		try {
+			ReturnValue = (List<Map<String, Object>>)RemoteProcedureCall(RECServerURL, "getTestResultList", Params);
+		}
+		catch(IOException e) {
+			// TODO exception handling
+		}
+		
+		// TODO validate Response
+		
+		return ReturnValue;
 	}
 	
 }
